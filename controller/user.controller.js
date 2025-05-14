@@ -1,6 +1,6 @@
-import { PassValidation } from "../utils/index.js";
-
-
+import { PassValidation,emailValidation } from "../utils/index.js";
+import userRepository from "../repository/user.repository.js";
+const userRepo =  new userRepository();
 const registerUser = async (req, res) => {
   try {
 
@@ -20,6 +20,32 @@ const registerUser = async (req, res) => {
         err: "Not fullfill the credentials",
       });
     }
+    const email = String(req.body.email);
+    if (!emailValidation(email)) {
+      return res.status(500).json({
+        mesasge: "Email must be in valid format",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+
+    const user = await userRepo.createUser({
+      name : req.body.name,
+      email : req.body.email,
+      password : req.body.password,
+    })
+    if (!user) {
+      return res.status(500).json({
+        message: "User not created",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+    return res.status(200).json({
+      message: "User created successfully",
+      success: true,
+      data: user,
+    })
 
   } catch (error) {
      console.log(error);
