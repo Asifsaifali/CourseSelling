@@ -12,6 +12,20 @@ class userRepository{
             throw new Error("Internal server error");
         }
     }
+
+    async getUser(email){
+        try {
+            
+            const user = await User.findOne({email})
+            return user;
+
+        } catch (error) {
+            console.log("Have some error in user repository");
+            console.log(error);
+            throw new Error("Internal server error");
+            
+        }
+    }
 }
 
 export default userRepository;

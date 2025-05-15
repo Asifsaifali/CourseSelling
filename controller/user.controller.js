@@ -1,23 +1,23 @@
-import { PassValidation,emailValidation, hashPassword } from "../utils/index.js";
+import {
+  PassValidation,
+  emailValidation,
+  hashPassword,
+} from "../utils/index.js";
 import userRepository from "../repository/user.repository.js";
-import bcrypt from "bcrypt"
 
-const userRepo =  new userRepository();
+const userRepo = new userRepository();
 const registerUser = async (req, res) => {
   try {
-
-     const pass = String(req.body.password);
+    const pass = String(req.body.password);
     if (pass.length <= 5 && pass.length < 15) {
       return res.status(500).json({
         message: "Password must be greater than 5 characters ",
         success: false,
         err: "Not fullfill the credentials",
       });
-    }  
+    }
 
-
-
-     if(!PassValidation(pass)) {
+    if (!PassValidation(pass)) {
       return res.status(500).json({
         message: "Password must be contain at least one uppercase letter",
         success: false,
@@ -33,13 +33,22 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const hashedPass = await hashPassword(pass)
+    const existUser = await userRepo.getUser(email)
+    if(existUser){
+      return res.status(500).json({
+        message: "User already exist registered with another email", 
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+
+    const hashedPass = await hashPassword(pass);
 
     const user = await userRepo.createUser({
-      name : req.body.name,
-      email : req.body.email,
-      password :hashedPass,
-    })
+      name: req.body.name,
+      email: req.body.email,
+      password: hashedPass,
+    });
     if (!user) {
       return res.status(500).json({
         message: "User not created",
@@ -51,14 +60,13 @@ const registerUser = async (req, res) => {
       message: "User created successfully",
       success: true,
       data: user,
-    })
-
+    });
   } catch (error) {
-     console.log(error);
+    console.log(error);
     res.status(500).json({
       message: "Internal server error",
       success: false,
     });
   }
-}
+};
 export { registerUser };
