@@ -1,35 +1,32 @@
-const register = async(req, res)=>{
-    const {name, email, password} = req.body;
-    if(!name || !email || !password){
-        return res.status(400).json({
-            message: "Please fill all the fields"
-        })
-    }
-    // check if user already exists
-    const userExists = await User.findOne({email});
-    if(userExists){
-        return res.status(400).json({
-            message: "User already exists"
-        })
-    }
-    // create user
-    const user = await User.create({
-        name,
-        email,
-        password
-    });
-    if(user){
-        return res.status(201).json({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            token: generateToken(user._id)
-        })
-    }else{
-        return res.status(400).json({
-            message: "Invalid user data"
-        })
-    }
-}
+import { PassValidation } from "../utils/index.js";
 
-export {register}
+
+const registerUser = async (req, res) => {
+  try {
+
+     const pass = String(req.body.password);
+    if (pass.length <= 5 && pass.length < 15) {
+      return res.status(500).json({
+        message: "Password must be greater than 5 characters ",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }  
+
+     if(!PassValidation(pass)) {
+      return res.status(500).json({
+        message: "Password must be contain at least one uppercase letter",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+
+  } catch (error) {
+     console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+}
+export { registerUser };

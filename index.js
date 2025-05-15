@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import connectDB from "./config/server.js";
 import userRoutes from "./routes/user.routes.js";
 import jwt from "jsonwebtoken";
+import courseRoutes from "./routes/courses/courses.routes.js";
 
 const user = {
   id: 1,
@@ -34,7 +35,8 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use("api/v1/users", userRoutes);
+app.use("/api/v1/users", userRoutes);
+app.use('/api/v1/courses', courseRoutes)
 
 connectDB();
 
