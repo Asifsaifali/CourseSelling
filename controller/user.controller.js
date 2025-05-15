@@ -1,5 +1,7 @@
-import { PassValidation,emailValidation } from "../utils/index.js";
+import { PassValidation,emailValidation, hashPassword } from "../utils/index.js";
 import userRepository from "../repository/user.repository.js";
+import bcrypt from "bcrypt"
+
 const userRepo =  new userRepository();
 const registerUser = async (req, res) => {
   try {
@@ -12,6 +14,8 @@ const registerUser = async (req, res) => {
         err: "Not fullfill the credentials",
       });
     }  
+
+
 
      if(!PassValidation(pass)) {
       return res.status(500).json({
@@ -29,10 +33,12 @@ const registerUser = async (req, res) => {
       });
     }
 
+    const hashedPass = await hashPassword(pass)
+
     const user = await userRepo.createUser({
       name : req.body.name,
       email : req.body.email,
-      password : req.body.password,
+      password :hashedPass,
     })
     if (!user) {
       return res.status(500).json({
