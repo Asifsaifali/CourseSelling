@@ -10,7 +10,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
+    phone: {
+      type: Number,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -26,17 +29,26 @@ const UserSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    verificationToken : {
-        type: String,
+    verificationToken: {
+      type: String,
     },
-    resetPasswordExpiry : {
-        type : Date,
-    }
+    resetPasswordExpiry: {
+      type: Date,
+    },
 
+    enrolledCourses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course",
+        enrolledAt: {
+          default: Date.now(),
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", UserSchema)
+const User = mongoose.model("User", UserSchema);
 
 export default User;
