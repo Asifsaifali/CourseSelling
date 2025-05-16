@@ -43,10 +43,19 @@ const registerUser = async (req, res) => {
     }
 
     const hashedPass = await hashPassword(pass);
+    const phone = String(req.body.phone);
+    if (phone.length !== 10) {
+      return res.status(500).json({
+        message: "Phone number must be 10 digits",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
 
     const user = await userRepo.createUser({
       name: req.body.name,
       email: req.body.email,
+      phone : req.body.phone,
       password: hashedPass,
     });
     if (!user) {
