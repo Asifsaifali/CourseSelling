@@ -26,6 +26,17 @@ class userRepository{
             
         }
     }
+
+    async getAllUsers(){
+        try {
+            const users = await User.find()
+            return users;
+        } catch (error) {
+            console.log("Have some error in user repository");
+            console.log(error);
+            throw new Error("Internal server error");
+        }
+    }
 }
 
 export default userRepository;

@@ -4,10 +4,10 @@ import {
   hashPassword,
 } from "../utils/index.js";
 import jwt from "jsonwebtoken";
-import userRepository from "../repository/user.repository.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
-const userRepo = new userRepository();
+import UserServices from "../services/user.services.js";
+const userServices = new UserServices(); 
 const registerUser = async (req, res) => {
   try {
     const pass = String(req.body.password);
@@ -43,7 +43,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const existUser = await userRepo.getUser(email);
+    const existUser = await userServices.getUser(email);
     if (existUser) {
       return res.status(500).json({
         message: "User already exist registered with another email",
@@ -62,7 +62,7 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const user = await userRepo.createUser({
+    const user = await userServices.createUser({
       name: req.body.name,
       email: req.body.email.toLowerCase(),
       phone: req.body.phone,
@@ -103,7 +103,7 @@ const loginUser = async (req, res) => {
         err: "Not fullfill the credentials",
       });
     }
-    const user = await userRepo.getUser(email);
+    const user = await userServices.getUser(email);
     if (!user) {
       return res.status(500).json({
         message: "User not found",
@@ -139,4 +139,55 @@ const loginUser = async (req, res) => {
     });
   }
 };
-export { registerUser, loginUser };
+
+const getUserByEmail = async(req, res) => {
+
+  try {
+    const email = String(req.body.email);
+    const user = await userServices.getUser(email);
+    if (!user) {
+      return res.status(500).json({
+        message: "User not found",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    } 
+    res.status(200).json({
+      message: "User fetched successfully",
+      success: true,
+      data: user,
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+}
+
+const getAllUsers = async(req,res)=>{
+  try {
+    const users = await userServices.getAllUsers();
+    if (!users) {
+      return res.status(500).json({
+        message: "User not found",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    } 
+    res.status(200).json({
+      message: "All users fetched successfully",
+      success: true,
+      data: users,
+
+    })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+}
+export { registerUser, loginUser, getUserByEmail, getAllUsers };
