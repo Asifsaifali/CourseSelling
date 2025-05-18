@@ -3,8 +3,10 @@ import {
   emailValidation,
   hashPassword,
 } from "../utils/index.js";
+import jwt from "jsonwebtoken";
 import userRepository from "../repository/user.repository.js";
-
+import crypto from "crypto";
+import bcrypt from "bcrypt";
 const userRepo = new userRepository();
 const registerUser = async (req, res) => {
   try {
@@ -65,6 +67,9 @@ const registerUser = async (req, res) => {
         err: "Not fullfill the credentials",
       });
     }
+    const token = crypto.randomBytes(32).toString("hex");
+    user.verificationToken = token;
+    await user.save()
     return res.status(200).json({
       message: "User created successfully",
       success: true,
@@ -78,4 +83,51 @@ const registerUser = async (req, res) => {
     });
   }
 };
-export { registerUser };
+
+const loginUser = async (req, res) => {
+  try {
+      const email = String(req.body.email)
+      const pass = String(req.body.password)
+      if (!emailValidation(email)) {
+          return res.status(500).json({
+              message: "Email must be in valid format",
+              success: false,
+              err: "Not fullfill the credentials",
+          });
+      }
+      const user = await userRepo.getUser(email)
+      if (!user) {
+          return res.status(500).json({
+              message: "User not found",
+              success: false,
+              err: "Not fullfill the credentials",
+          });
+      }
+      const resp = await bcrypt.compare(pass, user.password)
+      if (!resp) {
+          return res.status(500).json({
+              message: "Password is incorrect",
+              success: false,
+              err: "Not fullfill the credentials",
+          });
+      }
+
+      const token = jwt.sign({id : user._id, role : user.role }, process.env.JWT_SECRET, {expiresIn: "24h"})
+      return res.status(200).json({
+        message: "User logged in successfully",
+        success: true,
+        data: user,
+        token: token,
+      })
+     
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+    
+  }
+
+}
+export { registerUser, loginUser };
