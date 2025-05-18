@@ -11,6 +11,7 @@ const userRepo = new userRepository();
 const registerUser = async (req, res) => {
   try {
     const pass = String(req.body.password);
+     const email = String(req.body.email);
     if (pass.length <= 5 && pass.length < 15) {
       return res.status(500).json({
         message: "Password must be greater than 5 characters ",
@@ -19,6 +20,13 @@ const registerUser = async (req, res) => {
       });
     }
 
+    if (!req.body.name || !email || !req.body.phone || !pass) {
+      return res.status(500).json({
+        message: "Please provide all the fields",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
     if (!PassValidation(pass)) {
       return res.status(500).json({
         message: "Password must be contain at least one uppercase letter",
@@ -26,7 +34,7 @@ const registerUser = async (req, res) => {
         err: "Not fullfill the credentials",
       });
     }
-    const email = String(req.body.email);
+   
     if (!emailValidation(email)) {
       return res.status(500).json({
         mesasge: "Email must be in valid format",
@@ -35,10 +43,10 @@ const registerUser = async (req, res) => {
       });
     }
 
-    const existUser = await userRepo.getUser(email)
-    if(existUser){
+    const existUser = await userRepo.getUser(email);
+    if (existUser) {
       return res.status(500).json({
-        message: "User already exist registered with another email", 
+        message: "User already exist registered with another email",
         success: false,
         err: "Not fullfill the credentials",
       });
@@ -56,8 +64,8 @@ const registerUser = async (req, res) => {
 
     const user = await userRepo.createUser({
       name: req.body.name,
-      email: req.body.email,
-      phone : req.body.phone,
+      email: req.body.email.toLowerCase(),
+      phone: req.body.phone,
       password: hashedPass,
     });
     if (!user) {
@@ -69,7 +77,7 @@ const registerUser = async (req, res) => {
     }
     const token = crypto.randomBytes(32).toString("hex");
     user.verificationToken = token;
-    await user.save()
+    await user.save();
     return res.status(200).json({
       message: "User created successfully",
       success: true,
@@ -86,48 +94,49 @@ const registerUser = async (req, res) => {
 
 const loginUser = async (req, res) => {
   try {
-      const email = String(req.body.email)
-      const pass = String(req.body.password)
-      if (!emailValidation(email)) {
-          return res.status(500).json({
-              message: "Email must be in valid format",
-              success: false,
-              err: "Not fullfill the credentials",
-          });
-      }
-      const user = await userRepo.getUser(email)
-      if (!user) {
-          return res.status(500).json({
-              message: "User not found",
-              success: false,
-              err: "Not fullfill the credentials",
-          });
-      }
-      const resp = await bcrypt.compare(pass, user.password)
-      if (!resp) {
-          return res.status(500).json({
-              message: "Password is incorrect",
-              success: false,
-              err: "Not fullfill the credentials",
-          });
-      }
+    const email = String(req.body.email);
+    const pass = String(req.body.password);
+    if (!emailValidation(email)) {
+      return res.status(500).json({
+        message: "Email must be in valid format",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+    const user = await userRepo.getUser(email);
+    if (!user) {
+      return res.status(500).json({
+        message: "User not found",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+    const resp = await bcrypt.compare(pass, user.password);
+    if (!resp) {
+      return res.status(500).json({
+        message: "Password is incorrect",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
 
-      const token = jwt.sign({id : user._id, role : user.role }, process.env.JWT_SECRET, {expiresIn: "24h"})
-      return res.status(200).json({
-        message: "User logged in successfully",
-        success: true,
-        data: user,
-        token: token,
-      })
-     
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+    return res.status(200).json({
+      message: "User logged in successfully",
+      success: true,
+      data: user,
+      token: token,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({
       message: "Internal server error",
       success: false,
     });
-    
   }
-
-}
+};
 export { registerUser, loginUser };

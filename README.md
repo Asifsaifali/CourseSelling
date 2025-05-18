@@ -22,14 +22,14 @@ This is the backend API for a Course Selling application. It provides functional
 
 ### course-selling-backend/
 
-### ├── controllers/ # Business logic
-### ├── middleware/ # Auth and other middlewares
-### ├── models/ # Mongoose models
-### ├── routes/ # API route definitions
-### ├── config/ # DB config
-### ├── .env # Environment variables
-### ├── app.js # Express app entry point
-### └── server.js # Server bootstrap
+- ├── controllers/ # Business logic
+- ├── middleware/ # Auth and other middlewares
+- ├── models/ # Mongoose models
+- ├── routes/ # API route definitions
+- ├── config/ # DB config
+- ├── .env # Environment variables
+- ├── app.js # Express app entry point
+- └── server.js # Server bootstrap
 
 
 
@@ -51,5 +51,5 @@ This is the backend API for a Course Selling application. It provides functional
     JWT_SECRET=your_jwt_secret
 
 4. Run the server:
-```bash
+    ```bash
     npm start
