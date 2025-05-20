@@ -37,6 +37,20 @@ class userRepository{
             throw new Error("Internal server error");
         }
     }
+
+    async verifyUser(token){
+        try {
+            const verifiedUser = await User.findOne({verificationToken : token})
+            console.log(verifiedUser);
+            
+            return verifiedUser;
+        } catch (error) {
+            console.log("Have some error in user repository");
+            console.log(error);
+            throw new Error("Internal server error");
+            
+        }
+    }
 }
 
 export default userRepository;
