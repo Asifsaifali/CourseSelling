@@ -36,6 +36,17 @@ class UserServices {
       throw new Error("Internal server error");
     }
   }
+
+  async verifyUser(token){
+    try {
+      const verifiedUser = await this.userRepo.verifyUser(token);
+      return verifiedUser;
+    } catch (error) {
+      console.log("Have some error in user repository");
+      console.log(error);
+      throw new Error("Internal server error");
+    }
+  }
 }
 
 export default UserServices;

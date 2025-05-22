@@ -42,7 +42,7 @@ class userRepository{
         try {
             const verifiedUser = await User.findOne({verificationToken : token})
             console.log(verifiedUser);
-            
+
             return verifiedUser;
         } catch (error) {
             console.log("Have some error in user repository");
