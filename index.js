@@ -5,6 +5,7 @@ import connectDB from "./config/server.js";
 import jwt from "jsonwebtoken";
 import userRoutes from "./routes/users/user.routes.js"
 import courseRoutes from "./routes/courses/courses.routes.js";
+import AdminRoutes from "./routes/admin/admin.routes.js"
 
 const user = {
   id: 1,
@@ -38,6 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/v1/users", userRoutes);
 app.use("/api/v1/courses", courseRoutes);
+app.use("/api/v1/admin", AdminRoutes);
 
 connectDB();
 

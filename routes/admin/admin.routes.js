@@ -4,3 +4,5 @@ const router= express.Router()
 
 
 router.post('/register', createAdmin)
+
+export default router;
