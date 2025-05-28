@@ -14,8 +14,14 @@ const CourseSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    creatorId: ObjectId,
-    imageUrl: String,
+    creatorId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Admin",
+    },
+    imageUrl: {
+      type: String,
+      default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1AN3kSvzRBWzP4hbcagzKGyTgEKI8tKPTg&s",
+    },
   },
   { timeseries: true }
 );
