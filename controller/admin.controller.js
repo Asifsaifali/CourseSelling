@@ -41,4 +41,21 @@ const createAdmin = async (req, res) => {
   }
 };
 
+const getAdmin = async (req,res)=>{
+  try {
+    const admin = await adminServices.getAdmin(email)
+    return res.status(200).json({
+       message: "Admin fetched successfully",
+      success: true,
+      data: admin,
+    })
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
 export { createAdmin };
