@@ -14,6 +14,17 @@ class AdminServices{
             throw new Error("Error in creating admin");
         }
     }
+
+    async getAdmin(email){
+        try {
+            const admin = this.adminRepository.getAdmin(email)
+            return admin
+        } catch (error) {
+            throw new Error("Error triggered while fetching admin")
+        }
+    }
 }
+
+
 
 export default AdminServices;
