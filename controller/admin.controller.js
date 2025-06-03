@@ -43,7 +43,14 @@ const createAdmin = async (req, res) => {
 
 const getAdmin = async (req,res)=>{
   try {
-    const admin = await adminServices.getAdmin(email)
+    const admin = await adminServices.getAdmin(req.body.email.toLowerCase());
+    if (!admin) { 
+      return res.status(404).json({
+        message: "Admin not found",
+        success: false,
+        error: "Admin not found",
+      });
+    }
     return res.status(200).json({
        message: "Admin fetched successfully",
       success: true,
@@ -58,4 +65,4 @@ const getAdmin = async (req,res)=>{
   }
 }
 
-export { createAdmin };
+export { createAdmin, getAdmin };
