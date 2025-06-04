@@ -17,10 +17,15 @@ const createCourse = async(req, res)=>{
         const course = await courseService.createCourse(courseData)
         return res.status(201).json({
             message: "Course created successfully",
-            course: course
+            data: course,
+            success : true
         })
     } catch (error) {
-        
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+            success: false
+        })
     }
 }
 
