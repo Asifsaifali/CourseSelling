@@ -3,7 +3,7 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/create", createCourse)
+router.post("/create", createCourse)
 
 
 export default router;
