@@ -23,6 +23,15 @@ class AdminServices{
             throw new Error("Error triggered while fetching admin")
         }
     }
+
+    async loginAdmin(email){
+        try {
+            const admin = await this.adminRepository.loginAdmin(email)
+            return admin
+        } catch (error) {
+             throw new Error("Error triggered while fetching admin")
+        }
+    }
 }
 
 
