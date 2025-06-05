@@ -22,6 +22,16 @@ class AdminRepository{
             throw new Error("Error in finding admin");
         }
     }
+
+    async loginAdmin(email){
+        try {
+            const admin = await Admin.findOne({email})
+            return admin
+        } catch (error) {
+            console.log("Error in finding admin:");
+            throw new Error("Error in finding admin");
+        }
+    }
 }
 
 export default AdminRepository;
