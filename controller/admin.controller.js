@@ -1,5 +1,7 @@
+import jwt from "jsonwebtoken";
 import AdminServices from "../services/admin.services.js";
-import { hashPassword } from "../utils/index.js";
+import { hashPassword, emailValidation } from "../utils/index.js";
+import  bcrypt from "bcrypt"
 
 const adminServices = new AdminServices()
 
@@ -65,4 +67,54 @@ const getAdmin = async (req,res)=>{
   }
 }
 
-export { createAdmin, getAdmin };
+ const loginAdmin = async(req, res)=>{
+  try {
+    const email = String(req.body.email)
+    const password = String(req.body.password)
+    if (!emailValidation(email)) {
+          return res.status(500).json({
+            message: "Email must be in valid format",
+            success: false,
+            err: "Not fullfill the credentials",
+          });
+        }
+
+    const admin = await adminServices.loginAdmin(email)
+    if (!admin) {
+      return res.status(500).json({
+        message: "User not found",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+    const resp = await bcrypt.compare(password, admin.password)
+     if (!resp) {
+      return res.status(500).json({
+        message: "Password is incorrect",
+        success: false,
+        err: "Not fullfill the credentials",
+      });
+    }
+
+    const token = jwt.sign({ id : admin._id, role : admin.role},
+      process.env.JWT_SECRET,
+      { expiresIn: "24h"}
+    )
+
+    return res.status(200).json({
+      message : "Admin logged in Successfully",
+      data : admin,
+      success : true,
+      token : token
+    })
+    
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+      error: error.message,
+    });
+  }
+}
+
+export { createAdmin, getAdmin, loginAdmin };

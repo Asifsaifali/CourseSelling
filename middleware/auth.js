@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken"
+import User from "../model/user.model.js"
 
 const authenticate = async (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1]; // Bearer <token>
@@ -30,4 +30,4 @@ const authorizeAdmin = (req, res, next) => {
   next();
 };
 
-module.exports = { authenticate, authorizeAdmin };
+export { authenticate, authorizeAdmin };
