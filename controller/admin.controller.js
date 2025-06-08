@@ -100,7 +100,8 @@ const getAdmin = async (req,res)=>{
       process.env.JWT_SECRET,
       { expiresIn: "24h"}
     )
-
+    admin.isVerified = true;
+    await admin.save();
     return res.status(200).json({
       message : "Admin logged in Successfully",
       data : admin,
