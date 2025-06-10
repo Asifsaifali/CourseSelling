@@ -21,7 +21,11 @@ const AdminSchema = new mongoose.Schema(
     isVerified:{
       type: Boolean,
       default: false,
-    }
+    },
+    role: {
+      type: String,
+      default: "admin"
+    },
   },
   { timestamps: true }
 );
