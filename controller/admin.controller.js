@@ -103,7 +103,7 @@ const getAdmin = async (req,res)=>{
     admin.isVerified = true;
     await admin.save();
     return res.status(200).json({
-      message : "Admin logged in Successfully",
+      message : `Admin ${admin.firstName} logged in Successfully`,
       data : admin,
       success : true,
       token : token
