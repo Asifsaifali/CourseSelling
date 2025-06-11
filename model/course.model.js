@@ -10,9 +10,31 @@ const CourseSchema = new mongoose.Schema(
       type: String,
     },
 
+    instructor:{
+      type:String,
+      default:"Asif saif ali"
+    },
+    category: {
+      type: String,
+      enum: ["Web Development", "Data Science", "Blockchain Development", "Full Stack Development","Backend Development","Frontend Development", "Others"]
+    },
+    level:{
+      type:String,
+      enum: ["Beginner", "Intermediate", "Advanced", "Beginner to Advanced"],
+      default: "Beginner"
+    },
+    language:{
+      type: String,
+      default: "English"
+    },
+    duration:{
+      type : String,
+      required : true,
+    },
     price: {
       type: Number,
       required: true,
+      min: 0
     },
     creatorId: {
       type: mongoose.Schema.Types.ObjectId,
