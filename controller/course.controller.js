@@ -12,11 +12,16 @@ const createCourse = async(req, res)=>{
             title: req.body.title,
             description: req.body.description,
             price: req.body.price,
+            instructor : req.body.instructor,
+            category : req.body.category,
+            level : req.body.level,
+            language : req.body.language,
+            duration : req.body.duration
         }
 
         const course = await courseService.createCourse(courseData)
         return res.status(201).json({
-            message: "Course created successfully",
+            message: "New Course created successfully",
             data: course,
             success : true
         })
