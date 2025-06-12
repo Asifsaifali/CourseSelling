@@ -12,7 +12,18 @@ class CourseRepository{
         }
 }
 
-async 
+async purchaseCourse(courseId, userId){
+    try {
+        const course = await Course.findById(courseId)
+        if (!course) {
+            throw new Error("Course not found");
+        }
+        return course;
+    } catch (error) {
+        console.error("Error purchasing course:", error);
+        throw error;
+    }
+}
 }
 
 
