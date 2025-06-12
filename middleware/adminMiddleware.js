@@ -22,8 +22,6 @@ const adminMiddleware = async (req, res, next) => {
         .status(400)
         .json({ message: "Email and password are required" });
     }
-    console.log(email, password);
-    console.log(decode);
 
     const admin = await Admin.findOne({
       _id: decode.id,
@@ -34,7 +32,7 @@ const adminMiddleware = async (req, res, next) => {
     req.admin = admin;
     next();
   } catch (error) {
-    return res.status(401).json({ message: "Internal server error" });
+    return res.status(401).json({ message: "Please login first to add a new Course" });
   }
 };
 

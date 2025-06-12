@@ -125,10 +125,12 @@ const loginUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "24h" }
     );
+
+    const { password, ...userWithoutPassword } = user._doc; // Exclude password from the response
     return res.status(200).json({
       message: "User logged in successfully",
       success: true,
-      data: user,
+      data: userWithoutPassword,
       token: token,
     });
   } catch (error) {

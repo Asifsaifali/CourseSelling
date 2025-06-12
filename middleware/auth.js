@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import User from "../model/user.model.js"
 
-const authenticate = async (req, res, next) => {
+const userMiddleware = async (req, res, next) => {
   const token = req.header("Authorization")?.split(" ")[1]; // Bearer <token>
 
   if (!token) {
@@ -10,7 +10,12 @@ const authenticate = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
+    const email = req.headers["email"]
+    const password = req.headers["password"];
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
+    const user = await User.findById({email});
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
@@ -22,12 +27,5 @@ const authenticate = async (req, res, next) => {
   }
 };
 
-// ✅ Middleware to check if user is an admin
-const authorizeAdmin = (req, res, next) => {
-  if (req.user.role !== "admin") {
-    return res.status(403).json({ message: "Admins only" });
-  }
-  next();
-};
 
-export { authenticate, authorizeAdmin };
+export { userMiddleware };

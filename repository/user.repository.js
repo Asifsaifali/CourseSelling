@@ -29,7 +29,7 @@ class userRepository{
 
     async getAllUsers(){
         try {
-            const users = await User.find()
+            const users = await User.find({},{password: 0})
             return users;
         } catch (error) {
             console.log("Have some error in user repository");
