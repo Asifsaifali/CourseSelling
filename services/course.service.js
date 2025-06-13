@@ -13,6 +13,16 @@ class CourseService{
             throw error;
         }
     }
+
+    async purchaseCourse(courseId) {
+        try {
+            const course = await this.courseRepository.purchaseCourse(courseId);
+            return course;
+        } catch (error) {
+            console.error("Error in CourseService.purchaseCourse:", error);
+            throw error;
+        }
+    }
 }
 
 export default CourseService;
