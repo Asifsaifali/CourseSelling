@@ -36,20 +36,24 @@ This is the backend API for a Course Selling application. It provides functional
 ## 📦 Installation
 
 1. Clone the repository:
-   ```bash
+```bash
    git clone https://github.com/your-username/course-selling-backend.git
+```
    cd course-selling-backend
 
 2. Install dependencies:
-    ```bash
+```bash
     npm install
+```
 
 3. Configure environment variables in a .env file:
-        
-    PORT=5000
+```plaintext
+    PORT=3000 
+    NODE_ENV=development
     MONGODB_URI=mongodb://localhost:27017/courseapp
     JWT_SECRET=your_jwt_secret
 
 4. Run the server:
-    ```bash
+```bash
     npm start
+```
