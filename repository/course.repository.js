@@ -12,7 +12,7 @@ class CourseRepository{
         }
 }
 
-async purchaseCourse(courseId, userId){
+async purchaseCourse(courseId){
     try {
         const course = await Course.findById(courseId)
         if (!course) {
