@@ -1,5 +1,6 @@
 import CourseService from "../services/course.service.js"
 import Admin from "../model/admin.model.js";
+import User from "../model/user.model.js";
 
 const courseService = new CourseService();
 
@@ -34,5 +35,37 @@ const createCourse = async(req, res)=>{
     }
 }
 
+const purchaseCourse = async(req, res)=>{
+    try {
+        const courseId = req.body.courseId;
+        const userId = req.user._id;
 
-export {createCourse}
+        if (!courseId) {
+            return res.status(400).json({ message: "Course ID is required" });
+        }
+        const course = await courseService.purchaseCourse(courseId)
+        if (!course) {
+            return res.status(404).json({ message: "Course not found" });
+        }
+
+        const user = await User.findById(userId)
+        if(user.enrolledCourses.includes(courseId)){
+            return res.status(400).json({ message: "You have already enrolled in this course" });
+        }
+        user.enrolledCourses.push(courseId)
+        await user.save()
+        return res.status(200).json({
+            message: "Course purchased successfully",
+            data: course,
+            success: true
+        })
+    } catch (error) {
+        return res.status(500).json({
+            message: "Internal server error",
+            error: error.message,
+            success: false
+        })
+    }
+}
+
+export {createCourse, purchaseCourse};
