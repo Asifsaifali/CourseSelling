@@ -47,7 +47,7 @@ This is the backend API for a Course Selling application. It provides functional
 ```
 
 3. Configure environment variables in a .env file:
-```plaintext
+
     PORT=3000 
     NODE_ENV=development
     MONGODB_URI=mongodb://localhost:27017/courseapp
