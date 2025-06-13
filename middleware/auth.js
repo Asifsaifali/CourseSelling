@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken"
 import User from "../model/user.model.js"
 
 const userMiddleware = async (req, res, next) => {
-  const token = req.header("Authorization")?.split(" ")[1]; // Bearer <token>
+  const token = req.header("Authorization")?.split(" ")[1]; 
 
   if (!token) {
     return res.status(401).json({ message: "No token provided" });
@@ -15,7 +15,11 @@ const userMiddleware = async (req, res, next) => {
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
-    const user = await User.findById({email});
+    const user = await User.findOne({
+      email: email
+    });
+    console.log(user);
+    
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
@@ -23,7 +27,7 @@ const userMiddleware = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    res.status(401).json({ message: "Invalid token" });
+    res.status(401).json({ message: "Intenal Server error" });
   }
 };
 
