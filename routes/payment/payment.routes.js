@@ -1,10 +1,14 @@
 import express from "express"
-import createPayment from "../../controller/payment.controller.js"
+import {createPayment, checkOutSession} from "../../controller/payment.controller.js"
 import { courseMiddleware, userMiddleware } from "../../middleware/auth.js"
 import Stripe from "stripe"
+import PaymentRepository from "../../repository/payment.repository.js"
+
+
+const paymentRepository = new PaymentRepository()
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-let extractedSessionId = null
+// let extractedSessionId = null
 
 const router = express.Router()
 
@@ -17,29 +21,12 @@ router.get("/success", async (req, res) => {
     }
     res.send(`
         <h1>✅ Payment Successful!</h1>
-        <p>Thank you for your purchase.</p>
+        <h3>Thank you for your purchase.</h3>
         <p>Session ID: ${sessionId}</p>
     `);
 });
 
-router.get("/checkout-session", async (req, res) => {
-  try {
-//     const sessionId = req.headers["session_id"]; 
-//   if (!sessionId) {
-//     return res.status(400).json({ error: "Missing session_id in headers" });
-//   }
-    const session = await stripe.checkout.sessions.retrieve(extractedSessionId);
-    const data = JSON.stringify(session)
-    const parseData = JSON.parse(data)
-    res.json(JSON.parse(data));
-    console.log(parseData.customer_details.email);
-    console.log(parseData.customer_details.name);
-    
-    
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.get("/checkout-session",userMiddleware,courseMiddleware, checkOutSession);
 
 
 export default router
