@@ -45,7 +45,7 @@ const CourseSchema = new mongoose.Schema(
       default: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSe1AN3kSvzRBWzP4hbcagzKGyTgEKI8tKPTg&s",
     },
   },
-  { timeseries: true }
+  { timestamps: true }
 );
 
 const Course = mongoose.model("Course", CourseSchema)
