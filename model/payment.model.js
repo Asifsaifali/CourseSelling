@@ -1,6 +1,11 @@
 import mongoose from "mongoose";
 
 const paymentSchema  = await mongoose.Schema({
+
+    sessionId:{
+        type: String,
+        required : true,
+    },
     user : {
         type : mongoose.Schema.Types.ObjectId,
         ref : "User",
@@ -17,7 +22,7 @@ const paymentSchema  = await mongoose.Schema({
     },
     paymentMethod :{
         type : String,
-        enum : ["Card", "UPI", "Netbanking", "Wallet"],
+        enum : ["card", "upi", "Netbanking", "Wallet"],
         required: true
     },
     transactionId: {
@@ -26,7 +31,7 @@ const paymentSchema  = await mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["Pending", "Success", "Failed"],
+        enum: ["pending", "complete", "failed"],
         default: "Pending"
     },
     paidAt: {
