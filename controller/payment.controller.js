@@ -1,7 +1,7 @@
 import Stripe from "stripe";
 import Course from "../model/course.model.js";
 import PaymentRepository from "../repository/payment.repository.js";
-
+import Payment from "../model/payment.model.js";
 const paymentRepository = new PaymentRepository();
 
 // const createPayment = async(req,res)=>{
@@ -52,16 +52,8 @@ const paymentRepository = new PaymentRepository();
 const createPayment = async(req,res)=>{
      try {
         const courseName =  await Course.findOne({_id : req.course._id})
-         const transactionId = "TXN" + Date.now()
-         const paymentData = {
-            user : req.user._id,
-            course : req.course._id,
-            amount : courseName.price,
-            transactionId,
-        }   
-        const price = Number(courseName.price) * 100
-        console.log(courseName.price);
-        
+          
+    const price = Number(courseName.price) * 100
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -72,7 +64,7 @@ const createPayment = async(req,res)=>{
             product_data: {
               name: courseName.title,
             },
-            unit_amount: price, // in paisa
+            unit_amount: price, 
           },
           quantity: 1,
         },
@@ -93,4 +85,45 @@ const createPayment = async(req,res)=>{
   }
 }
 
-export default createPayment
+const checkOutSession = async (req, res) => {
+  try {
+    const sessionId = req.headers['session_id']
+   const dbData = await Payment.findOne({sessionId : sessionId })
+   const alreadyPurchased = Course.findOne({_id : req.headers['courseId']})
+   if(dbData || alreadyPurchased){
+    res.status(200).json({
+        message : "You have already purchased the Course",
+        success : false
+    })
+   }
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    const data = JSON.stringify(session)
+    const parseData = JSON.parse(data)
+    // res.json(JSON.parse(data));
+    const transactionId = "TXN" + String(parseData.created)
+        const courseName =  await Course.findOne({_id : req.course._id})
+        
+         const paymentData = {
+            sessionId : parseData.id,
+            user : req.user._id,
+            course : req.course._id,
+            amount : courseName.price,
+            transactionId,
+            paymentMethod : parseData.payment_method_types[0],
+            status : parseData.status
+        }  
+
+    const response = await paymentRepository.createPayment(paymentData)
+    res.status(200).json({
+        data : response,
+        message : "Payment Successfully",
+        sucess : true,
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message,
+        message : "Error in route for success"
+     });
+  }
+}
+
+export {createPayment,checkOutSession }
